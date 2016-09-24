@@ -81,7 +81,9 @@ void myfree(char * index, char * file, int line) {
   // search the tag list for the given index and remove the tag if found
   tag* ptr = tags;
   if (ptr->index == index) {
+    tag * temp = ptr;
     tags = ptr->next;
+    free(temp);
     return;
   }
   tag* prev = ptr;
