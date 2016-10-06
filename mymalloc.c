@@ -10,7 +10,7 @@ void * mymalloc(size_t size, char * file, int line) {
 
   // check if this is the first allocation of memory and set up initial metadata
   if (firstmalloc) {
-    *((short*)mem) = 20000;  //size of block
+    *((short*)mem) = 19996;  //size of block
     *((short*)mem + 1) = 0;  //availability: 1 = allocated, 0 = free
     firstmalloc = 0;
     
