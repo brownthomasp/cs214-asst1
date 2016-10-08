@@ -173,7 +173,7 @@ void test_F() {
 
 float calculateMeanOfArray(float arr[], int size) {
 	int i = 0;
-	int total = 0;	
+	float total = 0;	
 
 	while (i < size) {
 		total += arr[i];
@@ -195,8 +195,8 @@ int main() {
                        ,end;
 
 	//Do test A 100 times.
-	while (count < 50) {
-		printf("count = %d\n", count);
+	while (count < 100) {
+		//printf("count = %d\n", count);
 		gettimeofday(&start, NULL);
 		test_A();
 		gettimeofday(&end, NULL);
@@ -210,7 +210,7 @@ int main() {
 
 	//Do test B 100 times.
 	while (count < 100) {
-printf("count = %d\n", count);
+		//printf("count = %d\n", count);
 		gettimeofday(&start, NULL);
 		test_B();
 		gettimeofday(&end, NULL);
@@ -224,7 +224,7 @@ printf("count = %d\n", count);
 	
 	//Do test C 100 times.	
 	while (count < 100) {
-printf("count = %d\n", count);
+		//printf("count = %d\n", count);
 		gettimeofday(&start, NULL);
 		test_C();
 		gettimeofday(&end, NULL);
@@ -238,7 +238,7 @@ printf("count = %d\n", count);
 	
 	//Do test D 100 times.
 	while (count < 100) {
-printf("count = %d\n", count);
+		//printf("count = %d\n", count);
 		gettimeofday(&start, NULL);
 		test_D();
 		gettimeofday(&end, NULL);
@@ -252,7 +252,7 @@ printf("count = %d\n", count);
 	
 	//Do test E 100 times.	
 	while (count < 100) {
-printf("count = %d\n", count);
+		//printf("count = %d\n", count);
 		gettimeofday(&start, NULL);
 		test_E();
 		gettimeofday(&end, NULL);
@@ -266,7 +266,7 @@ printf("count = %d\n", count);
 	
 	//Do test F 100 times.
 	while (count < 100) {
-printf("count = %d\n", count);
+		//printf("count = %d\n", count);
 		gettimeofday(&start, NULL);
 		test_F();
 		gettimeofday(&end, NULL);
