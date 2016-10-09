@@ -1,5 +1,8 @@
 #include <stdio.h>
 
+#define size(ptr) *((short*)(ptr))
+#define allocd(ptr) *((short*)((ptr) + 2))
+
 
 static char mem[20000];
 
@@ -10,20 +13,26 @@ void * mymalloc(size_t size, char * file, int line) {
 
   // check if this is the first allocation of memory and set up initial metadata
   if (firstmalloc) {
-    *((short*)mem) = 19996;  //size of block
-    *((short*)mem + 1) = 0;  //availability: 1 = allocated, 0 = free
+    size(mem) = 19996;  //size of block
+    allocd(mem) = 0;  //availability: 1 = allocated, 0 = free
     firstmalloc = 0;
     
+  }
+
+  // check if size is larger than total mem - metadata 
+  if (size > 19996) {
+    fprintf(stderr, "ERROR: Not Enough Memmory\n\tFile: %s\n\tLine: %d\n", file, line);
+    return NULL;
   }
   
   // go through the "linked list" of blocks until we find an available block big enough, if we hit the end,
   // return NULL and report the lack of space
   void * ptr = mem;
   while (ptr < (void*)(mem + 20000)) {
-    if (!*((short*)(ptr + 2)) && *((short*)ptr) >= size + 4) {
+    if (!allocd(ptr) && size(ptr) >= size + 4) {
       break;
     }
-    ptr += *((short*)ptr) + 4;
+    ptr += size(ptr) + 4;
   }
 
   if (ptr >= (void*)(mem + 20000)) {
@@ -33,12 +42,12 @@ void * mymalloc(size_t size, char * file, int line) {
 
   // if a suitable block is found, divide it into an allocated and free block, then return
   // a pointer to the allocated block
-  int leftover = *((short*)ptr) - size;
-  *((short*)ptr) = size;
-  *((short*)(ptr + 2)) = 1;
+  short leftover = size(ptr) - size - 4;
+  size(ptr) = size;
+  allocd(ptr) = 1;
   
-  *((short*)(ptr + size + 4)) = leftover;
-  *((short*)(ptr + size + 6)) = 0;
+  size(ptr + size + 4) = leftover;
+  allocd(ptr + size + 4) = 0;
 
   return ptr + 4;
 
@@ -57,21 +66,22 @@ void myfree(void * index, char * file, int line) {
   // check our list of blocks for the given index
   void * ptr = mem;
   if (ptr + 4 == index) {
-    if (!*((short*)(ptr + *((short*)ptr) + 6))) {
-      *((short*)ptr) += *((short*)(ptr + *((short*)ptr) + 4));
+    // free and merge if the pointer is at the begining of the list
+    if (!allocd(ptr + size(ptr) + 6)) {
+      size(ptr) += size(ptr + size(ptr) + 4) + 4;
     }
-    *((short*)(ptr+2)) = 0;
+    allocd(ptr) = 0;
     return;
   }
   void * prev = ptr;
-  ptr += *((short*)ptr) + 4;
+  ptr += size(ptr) + 4;
 
   while(ptr < (void*)(mem + 20000)) {
-    if (ptr + 4 == index && *((short*)(ptr + 2))) {
+    if (ptr + 4 == index && allocd(ptr)) {
       break; 
     }
     prev = ptr;
-    ptr += *((short*)ptr) + 4;
+    ptr += size(ptr) + 4;
   }
 
   // report if the pointer is not an allocated block
@@ -81,14 +91,14 @@ void myfree(void * index, char * file, int line) {
   }
 
   // if we find the block, mark it free and combine with adjacent free blocks
-  if (!*((short*)(ptr + *((short*)ptr) + 6))) {
-    *((short*)ptr) += *((short*)(ptr + *((short*)ptr) + 4));
+  if (ptr + size(ptr) + 6 < (void*)mem + 20000 && !allocd(ptr + size(ptr) + 6)) {
+    size(ptr) += size(ptr + size(ptr) + 4) + 4;
   }
 
-  *((short*)(ptr + 2)) = 0;
+  allocd(ptr) = 0;
 
-  if (!*((short*)(prev + 2))) {
-    *((short*)prev) += *((short*)ptr) + 4;
+  if (!allocd(prev)) {
+    size(prev) += size(ptr) + 4;
   }
 
 }
