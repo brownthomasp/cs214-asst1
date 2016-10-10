@@ -67,7 +67,7 @@ void myfree(void * index, char * file, int line) {
   void * ptr = mem;
   if (ptr + 4 == index) {
     // free and merge if the pointer is at the begining of the list
-    if (!allocd(ptr + size(ptr) + 6)) {
+    if (!allocd(ptr + size(ptr) + 4)) {
       size(ptr) += size(ptr + size(ptr) + 4) + 4;
     }
     allocd(ptr) = 0;
@@ -91,13 +91,15 @@ void myfree(void * index, char * file, int line) {
   }
 
   // if we find the block, mark it free and combine with adjacent free blocks
-  if (ptr + size(ptr) + 6 < (void*)mem + 20000 && !allocd(ptr + size(ptr) + 6)) {
+  if (ptr + size(ptr) + 6 < (void*)mem + 20000 && !allocd(ptr + size(ptr) + 4)) {
+    // merge with next block if its free
     size(ptr) += size(ptr + size(ptr) + 4) + 4;
   }
 
   allocd(ptr) = 0;
 
   if (!allocd(prev)) {
+    // merge with previous block if its free
     size(prev) += size(ptr) + 4;
   }
 
