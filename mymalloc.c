@@ -1,9 +1,12 @@
 #include <stdio.h>
 
+// These two macros are for accessing the size metadata and allocated metadata of a pointer
+// associated with a block in our memory which are stored in the first 4 bytes of eqch block
 #define size(ptr) *((short*)(ptr))
 #define allocd(ptr) *((short*)((ptr) + 2))
 
-
+// Here is our block of memory which can hold up to 4000 single byte allocations with four
+// four bytes of metadata each, or a single allocation of up to 19996 bytes
 static char mem[20000];
 
 
@@ -13,8 +16,8 @@ void * mymalloc(size_t size, char * file, int line) {
 
   // check if this is the first allocation of memory and set up initial metadata
   if (firstmalloc) {
-    size(mem) = 19996;  //size of block
-    allocd(mem) = 0;  //availability: 1 = allocated, 0 = free
+    size(mem) = 19996; 
+    allocd(mem) = 0; 
     firstmalloc = 0;
     
   }
