@@ -184,7 +184,7 @@ void test_E() {
 //a great deal of fragmentation. Then, every other of the remaining allocated
 //blocks is freed to force merges of the concecutive free blocks.  Then, it 
 //will allocate several larger blocks and smaller blocks to see how well it 
-//handles filling in the fragmented memory.   
+//handles filling in the fragmented memory.   	
 void test_F() {
 	char* ptr[4000];
 	int count = 0;
@@ -198,6 +198,7 @@ void test_F() {
 
 	while (count < 4000) {
 		free(ptr[count]);
+		ptr[count] = NULL;
 		count += 2;
 	}
 
@@ -205,6 +206,7 @@ void test_F() {
 
 	while (count < 4000) {
 		free(ptr[count]);
+		ptr[count] = NULL;
 		count += 4;
 	}
 	
@@ -217,14 +219,14 @@ void test_F() {
 	
 	count = 2;
 	
-	while (count < 400) {
-		ptr[count] = malloc(1);
+	while (count < 4000) {
+		ptr[count] = malloc(2);
 		count += 4;
 	}
 	
 	for (count = 0; count < 4000; count++) {
 		if (ptr[count]) {
-			free(ptr(count));
+			free(ptr[count]);
 		}
 	}
 	

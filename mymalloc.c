@@ -45,14 +45,17 @@ void * mymalloc(size_t size, char * file, int line) {
     return NULL;
   }
 
-  // if a suitable block is found, divide it into an allocated and free block, then return
-  // a pointer to the allocated block
-  short leftover = size(ptr) - size - 4;
-  size(ptr) = size;
+  // if a suitable block is found and there is leftover space, divide it into an allocated and free block, 
+  // otherwise, simply mark the block as allocated, then return a pointer to the allocated block
+  if (size(ptr) > size) {
+    short leftover = size(ptr) - size - 4;
+    size(ptr) = size;
+
+    size(ptr + size + 4) = leftover;
+    allocd(ptr + size + 4) = 0;
+  }
+
   allocd(ptr) = 1;
-  
-  size(ptr + size + 4) = leftover;
-  allocd(ptr + size + 4) = 0;
 
   return ptr + 4;
 
