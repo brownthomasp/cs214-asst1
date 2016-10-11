@@ -199,12 +199,26 @@ void test_F() {
 		count += 2;
 	}
 
-	count = 0;
+	count = 2;
 
 	while (count < 4000) {
 		free(ptr[count]);
-		count += 2;
+		count += 4;
 	}
+	
+	count = 1;
+	
+	while (count < 4000) {
+		ptr[count] = malloc(5);
+		count += 4;
+	}
+	
+	for (count = 0; count < 4000; count++) {
+		if (ptr[count]) {
+			free(ptr(count));
+		}
+	}
+	
 }
 
 float calculateMeanOfArray(int arr[], int size) {
