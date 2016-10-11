@@ -178,21 +178,32 @@ void test_E() {
 	}
 }
 
-//Test F requests the maximum single block of memory that can be stored in 
-//a 20,000 byte memory pool with 4 bytes metdata, which is 19,996 bytes,
-//and then frees it immediately, 3000 times over. This will force the 
-//malloc routine to search the entirety of myblock for the correct 
-//amount of space.
+//Test F requests the maximum number of  1 bytes blocks of memory that 
+//can be stored in a 20,000 byte memory pool with 4 bytes metdata, which is 
+//4000, and then attempts to free every other  pointer. This should cause  
+//a great deal of fragmentation. The routine will then free the remaining
+//pointers to test its handling of memory fragmentation and block merging.
 void test_F() {
-	char *ptr = NULL;
+	char* ptr[4000];
 	int count = 0;
 
-	while (count < 3000) {
-		ptr = malloc(19996);
-		free(ptr);
-		ptr = NULL;
-
+	while (count < 4000) {
+		ptr[count] = malloc(1);
 		count++;
+	}
+
+	count = 1;
+
+	while (count < 4000) {
+		free(ptr[count]);
+		count += 2;
+	}
+
+	count = 0;
+
+	while (count < 4000) {
+		free(ptr[count]);
+		count += 2;
 	}
 }
 
