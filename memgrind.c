@@ -181,8 +181,10 @@ void test_E() {
 //Test F requests the maximum number of  1 bytes blocks of memory that 
 //can be stored in a 20,000 byte memory pool with 4 bytes metdata, which is 
 //4000, and then attempts to free every other  pointer. This should cause  
-//a great deal of fragmentation. The routine will then free the remaining
-//pointers to test its handling of memory fragmentation and block merging.
+//a great deal of fragmentation. Then, every other of the remaining allocated
+//blocks is freed to force merges of the concecutive free blocks.  Then, it 
+//will allocate several larger blocks and smaller blocks to see how well it 
+//handles filling in the fragmented memory.   
 void test_F() {
 	char* ptr[4000];
 	int count = 0;
@@ -210,6 +212,13 @@ void test_F() {
 	
 	while (count < 4000) {
 		ptr[count] = malloc(5);
+		count += 4;
+	}
+	
+	count = 2;
+	
+	while (count < 400) {
+		ptr[count] = malloc(1);
 		count += 4;
 	}
 	
