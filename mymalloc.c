@@ -32,7 +32,9 @@ void * mymalloc(size_t size, char * file, int line) {
   // return NULL and report the lack of space
   void * ptr = mem;
   while (ptr < (void*)(mem + 20000)) {
-    if (!allocd(ptr) && size(ptr) >= size + 4) {
+    // a block must be either exactly the right size or have enough extra space to accomodate the 
+    // metadata for the free block containing the leftover space 
+    if (!allocd(ptr) && (size(ptr) == size || size(ptr) >= size + 4)) {
       break;
     }
     ptr += size(ptr) + 4;
